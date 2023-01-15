@@ -8,12 +8,6 @@ $(function () {
         selectOtherMonths: true
     });
 
-    // var date = new Date
-    // let startDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() - date.getDay());
-    // let endDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() - date.getDay() + 6);
-    // var dateFormat = inst.settings.dateFormat || $.datepicker._defaults.dateFormat;
-    // $('input#weekly_datepicker').val($.datepicker.formatDate(dateFormat, startDate, inst.settings) + " - " + $.datepicker.formatDate(dateFormat, endDate, inst.settings))
-
     $('input#weekly_datepicker').datepicker({
         changeMonth: true,
         changeYear: true,

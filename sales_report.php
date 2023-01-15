@@ -101,13 +101,6 @@ require_once 'config.php';
                 <div class="flex pb-4 px-4 text-xl font-extrabold">
                     <h1>SALES REPORT</h1>
                 </div>
-                <!-- <div class="flex flex-row-reverse pb-4 px-4 text-xl font-extrabold float-none">
-                    <button class="text-white rounded-2xl text-lg w-60 py-3 inset-y-0 right-0 focus:outline-none bg-cyan-500 hover:bg-cyan-600 js-modal-trigger" data-target="add_item_form">
-                        <i class="fa fa-plus" aria-hidden="true"></i>
-                        Add Items
-                    </button>
-                </div> -->
-
 
                 <div id="tabs">
                     <ul>

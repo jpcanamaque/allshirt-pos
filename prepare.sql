@@ -41,9 +41,8 @@ CREATE TABLE IF NOT EXISTS `employee` (
 --
 
 INSERT INTO `employee` (`emp_id`, `emp_fname`, `emp_lname`, `emp_username`, `emp_password`, `isBranchHead`) VALUES
-(101, 'Svet Jazmine', 'Dio', 'svetdio@asco.com', 'svetdio123', 1),
-(102, 'Sample', 'Cashier', 'cashier1', 'cashier1', 0),
-(103, 'JPC', 'JPC', 'jpc', 'jpc123', 1);
+(101, 'Branch', 'Head', 'branchhead', 'Branchhead123!', 1),
+(102, 'Employee', 'Cashier', 'employee', 'Employee123!', 0);
 
 -- --------------------------------------------------------
 
