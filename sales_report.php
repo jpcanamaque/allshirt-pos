@@ -119,17 +119,22 @@ require_once 'config.php';
                     <div id="daily">
                         <div class="field is-horizontal">
                             <div class="field-label is-normal">
-                                <label class="label">Date of the Report</label>
+                                <label class="label">Report Date</label>
                             </div>
                             <div class="field-body">
-                                <div class="field">
-                                    <div class="control">
-                                        <input class="input" type="text" id="daily_datepicker" value="<?php echo date('m/d/Y', strtotime('now')) ?>">
-                                    </div>
+                                <div class="field is-grouped">
+                                    <p class="control is-expanded">
+                                        <input class="input" type="text" id="daily_datepicker" readonly value="<?php echo date('m/d/Y', strtotime('now')) ?>">
+                                    </p>
+                                    <p class="control">
+                                        <a class="button is-primary" id="daily_sr_filter">
+                                            Filter
+                                        </a>
+                                    </p>
                                 </div>
+
                             </div>
                         </div>
-
 
                         <div class="h-full overflow-y-auto px-2">
                             <table class="display" id="daily_report_tbl">
@@ -147,204 +152,310 @@ require_once 'config.php';
                                         <th>Net Sales<br>(in PhP)</th>
                                     </tr>
                                 </thead>
-
-                                <tbody>
-                                    <?php
-                                    $data = file_get_contents($host_url . '/api/generate_report.php?mode=daily&txndate=' . date('Y-m-d', strtotime('now')));
-                                    $data = json_decode($data, true);
-                                    $total_net = 0;
-                                    $total_gross = 0;
-                                    $ovr_total_disc = 0;
-                                    $ovr_total_tax = 0;
-                                    foreach ($data as $k => $v) {
-                                        $total_net = $total_net + $v['net_sales'];
-                                        $total_gross = $total_gross + $v['gross_sales_total'];
-                                        $ovr_total_disc = $ovr_total_disc + $v['total_discount'];
-                                        $ovr_total_tax = $ovr_total_tax + $v['total_tax'];
-                                    ?>
-                                        <tr>
-                                            <td><?php echo date("m/d/Y", strtotime($v['transaction_date'])); ?></td>
-                                            <td><?php echo $v['item_id'] ?></td>
-                                            <td><?php echo $v['item_name'] ?></td>
-                                            <td style="text-align: right;"><?php echo number_format($v['price'], 2, ".", ","); ?></td>
-                                            <td><?php echo $v['items_sold'] ?></td>
-                                            <td><?php echo $v['discount'] ?></td>
-                                            <td style="text-align: right;"><?php echo number_format($v['gross_sales_total'], 2, ".", ","); ?></td>
-                                            <td style="text-align: right;"><?php echo number_format($v['total_discount'], 2, ".", ","); ?></td>
-                                            <td style="text-align: right;"><?php echo number_format($v['total_tax'], 2, ".", ","); ?></td>
-                                            <td style="text-align: right;"><?php echo number_format($v['net_sales'], 2, ".", ","); ?></td>
-                                        </tr>
-                                    <?php } ?>
-                                </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <th colspan=6 style="text-align:right !important;">TOTALS</th>
-                                        <th id="daily_total_gross" style="text-align: right;">Php <?php echo number_format($total_gross, 2, ".", ","); ?></th>
-                                        <th id="daily_ovr_total_disc" style="text-align: right;">Php <?php echo number_format($ovr_total_disc, 2, ".", ","); ?></th>
-                                        <th id="daily_ovr_total_tax" style="text-align: right;">Php <?php echo number_format($ovr_total_tax, 2, ".", ","); ?></th>
-                                        <th id="daily_total_net" style="text-align: right;">Php <?php echo number_format($total_net, 2, ".", ","); ?></th>
-                                    </tr>
-                                </tfoot>
+                                <tbody></tbody>
+                                <tfoot></tfoot>
                             </table>
                         </div>
-                        <div id="weekly">
-                            <p>Morbi tincidunt, dui sit amet facilisis feugiat, odio metus gravida ante, ut pharetra massa metus id nunc. Duis scelerisque molestie turpis. Sed fringilla, massa eget luctus malesuada, metus eros molestie lectus, ut tempus eros massa ut dolor. Aenean aliquet fringilla sem. Suspendisse sed ligula in ligula suscipit aliquam. Praesent in eros vestibulum mi adipiscing adipiscing. Morbi facilisis. Curabitur ornare consequat nunc. Aenean vel metus. Ut posuere viverra nulla. Aliquam erat volutpat. Pellentesque convallis. Maecenas feugiat, tellus pellentesque pretium posuere, felis lorem euismod felis, eu ornare leo nisi vel felis. Mauris consectetur tortor et purus.</p>
+                    </div>
+                    <div id="weekly">
+                        <div class="field is-horizontal">
+                            <div class="field-label is-normal">
+                                <label class="label">Report Week</label>
+                            </div>
+                            <div class="field-body">
+                                <div class="field is-grouped">
+                                    <p class="control is-expanded">
+                                        <?php
+                                        $startDate = date("m/d/Y", strtotime('last sunday'));
+                                        $endDate = date("m/d/Y", strtotime($startDate . ' + 6 days'));
+                                        ?>
+                                        <input class="input" type="text" id="weekly_datepicker" readonly value="<?php echo $startDate . ' - ' . $endDate  ?>">
+                                    </p>
+                                    <p class="control">
+                                        <a class="button is-primary" id="weekly_sr_filter">
+                                            Filter
+                                        </a>
+                                    </p>
+                                </div>
+
+                            </div>
                         </div>
-                        <div id="monthly">
-                            <p>Mauris eleifend est et turpis. Duis id erat. Suspendisse potenti. Aliquam vulputate, pede vel vehicula accumsan, mi neque rutrum erat, eu congue orci lorem eget lorem. Vestibulum non ante. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Fusce sodales. Quisque eu urna vel enim commodo pellentesque. Praesent eu risus hendrerit ligula tempus pretium. Curabitur lorem enim, pretium nec, feugiat nec, luctus a, lacus.</p>
-                            <p>Duis cursus. Maecenas ligula eros, blandit nec, pharetra at, semper at, magna. Nullam ac lacus. Nulla facilisi. Praesent viverra justo vitae neque. Praesent blandit adipiscing velit. Suspendisse potenti. Donec mattis, pede vel pharetra blandit, magna ligula faucibus eros, id euismod lacus dolor eget odio. Nam scelerisque. Donec non libero sed nulla mattis commodo. Ut sagittis. Donec nisi lectus, feugiat porttitor, tempor ac, tempor vitae, pede. Aenean vehicula velit eu tellus interdum rutrum. Maecenas commodo. Pellentesque nec elit. Fusce in lacus. Vivamus a libero vitae lectus hendrerit hendrerit.</p>
+
+                        <div class="h-full overflow-y-auto px-2">
+                            <table class="display" id="weekly_report_tbl">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Item ID</th>
+                                        <th>Item Name</th>
+                                        <th>Price<br>(in PhP)</th>
+                                        <th>No. of Items Sold</th>
+                                        <th>Discount (in %)</th>
+                                        <th>Gross Sales<br>(in PhP)</th>
+                                        <th>Total Discounted Price<br>(in PhP)</th>
+                                        <th>Total Tax (in PhP)</th>
+                                        <th>Net Sales<br>(in PhP)</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                                <tfoot></tfoot>
+                            </table>
                         </div>
-                        <div id="quarterly">
-                            <p>Morbi tincidunt, dui sit amet facilisis feugiat, odio metus gravida ante, ut pharetra massa metus id nunc. Duis scelerisque molestie turpis. Sed fringilla, massa eget luctus malesuada, metus eros molestie lectus, ut tempus eros massa ut dolor. Aenean aliquet fringilla sem. Suspendisse sed ligula in ligula suscipit aliquam. Praesent in eros vestibulum mi adipiscing adipiscing. Morbi facilisis. Curabitur ornare consequat nunc. Aenean vel metus. Ut posuere viverra nulla. Aliquam erat volutpat. Pellentesque convallis. Maecenas feugiat, tellus pellentesque pretium posuere, felis lorem euismod felis, eu ornare leo nisi vel felis. Mauris consectetur tortor et purus.</p>
+                    </div>
+                    <div id="monthly">
+                        <div class="field is-horizontal">
+                            <div class="field-label is-normal">
+                                <label class="label">Report Month</label>
+                            </div>
+                            <div class="field-body">
+                                <div class="field is-grouped">
+                                    <p class="control is-expanded">
+                                        <input class="input" type="month" id="monthly_datepicker" value="<?php echo date("Y-m", strtotime('now'))  ?>">
+                                    </p>
+                                    <p class="control">
+                                        <a class="button is-primary" id="monthly_sr_filter">
+                                            Filter
+                                        </a>
+                                    </p>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="h-full overflow-y-auto px-2">
+                            <table class="display" id="monthly_report_tbl">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Item ID</th>
+                                        <th>Item Name</th>
+                                        <th>Price<br>(in PhP)</th>
+                                        <th>No. of Items Sold</th>
+                                        <th>Discount (in %)</th>
+                                        <th>Gross Sales<br>(in PhP)</th>
+                                        <th>Total Discounted Price<br>(in PhP)</th>
+                                        <th>Total Tax (in PhP)</th>
+                                        <th>Net Sales<br>(in PhP)</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                                <tfoot></tfoot>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="quarterly">
+                        <div class="field is-horizontal">
+                            <div class="field-label is-normal">
+                                <label class="label">Report Quarter</label>
+                            </div>
+                            <div class="field-body">
+                                <div class="field is-grouped">
+                                    <p class="control is-expanded">
+                                    <div class="select is-fullwidth">
+                                        <select id="quarterly_year">
+                                            <?php
+                                            $startYear = 2020;
+                                            $maxYear = 2050;
+                                            $currYear = date('Y', strtotime('now'));
+                                            $curMonth = date("m", strtotime('now'));
+                                            $curQuarter = ceil($curMonth / 3);
+                                            for ($i = $startYear; $i <= 2050; $i++) {
+                                            ?>
+                                                <option value="<?php echo $i ?>" <?php if ($currYear == $i) echo "selected"; ?>><?php echo $i ?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
+                                    </p>
+                                </div>
+                                <div class="field is-grouped">
+                                    <p class="control is-expanded">
+                                    <div class="select is-fullwidth">
+                                        <select id="quarterly_number">
+                                            <option value="1" <?php if ($curQuarter == 1) echo "selected"; ?>>1st Quarter (January to March)</option>
+                                            <option value="2" <?php if ($curQuarter == 2) echo "selected"; ?>>2nd Quarter (April to June)</option>
+                                            <option value="3" <?php if ($curQuarter == 3) echo "selected"; ?>>3rd Quarter (July to September)</option>
+                                            <option value="4" <?php if ($curQuarter == 4) echo "selected"; ?>>4th Quarter (October to December)</option>
+                                        </select>
+                                    </div>
+                                    </p>
+                                    <p class="control">
+                                        <a class="button is-primary" id="quarterly_sr_filter">
+                                            Filter
+                                        </a>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="h-full overflow-y-auto px-2">
+                            <table class="display" id="quarterly_report_tbl">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Item ID</th>
+                                        <th>Item Name</th>
+                                        <th>Price<br>(in PhP)</th>
+                                        <th>No. of Items Sold</th>
+                                        <th>Discount (in %)</th>
+                                        <th>Gross Sales<br>(in PhP)</th>
+                                        <th>Total Discounted Price<br>(in PhP)</th>
+                                        <th>Total Tax (in PhP)</th>
+                                        <th>Net Sales<br>(in PhP)</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                                <tfoot></tfoot>
+                            </table>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <!-- Main modal -->
-            <div id='add_item_form' class="modal">
-                <div class="modal-background"></div>
-                <div class="modal-card">
-                    <header class="modal-card-head">
-                        <p class="modal-card-title">Add Item Details</p>
-                        <button class="delete" aria-label="close"></button>
-                    </header>
-                    <section class="modal-card-body">
-                        <div class="field">
-                            <label for="" class="label">Item Name</label>
-                            <span id="item_name" class="has-text-danger errormsg"></span>
-                            <input type="text" class="input" id="item_name" placeholder="Item Name">
-                        </div>
-                        <div class="field">
-                            <label for="" class="label">Item Description</label>
-                            <span id="item_desc" class="has-text-danger errormsg"></span>
-                            <textarea class="textarea" placeholder="Short description about the product" id="item_desc"></textarea>
-                        </div>
-                        <div class="field">
-                            <label for="" class="label">Item Price (in Php)</label>
-                            <span id="price" class="has-text-danger errormsg"></span>
-                            <input class="input" type="number" min="0" placeholder="Price" id="price">
-                        </div>
-                        <div class="field">
-                            <label for="" class="label">Quantity</label>
-                            <span id="qty" class="has-text-danger errormsg"></span>
-                            <input class="input" type="number" min="0" placeholder="Quantity" id="qty">
-                        </div>
-                        <div class="field">
-                            <label for="" class="label">Item Image</label>
-                            <span id="item_image" class="has-text-danger errormsg"></span>
-                            <div id="file-js-example" class="file has-name is-primary">
-                                <label class="file-label">
-                                    <input class="file-input" type="file" name="item_image" id="item_image" accept="image/*">
-                                    <span class="file-cta">
-                                        <span class="file-icon">
-                                            <i class="fa fa-upload"></i>
-                                        </span>
-                                        <span class="file-label">
-                                            Choose a file…
-                                        </span>
-                                    </span>
-                                    <span class="file-name">
-                                        No file uploaded
-                                    </span>
-                                </label>
-
-                            </div>
-                        </div>
-                        <div class="field">
-                            <label for="" class="label">Image Preview</label>
-                            <figure class="image is-128x128">
-                                <img id="add-img-viewer" src="img/default-img.png" alt="Product Image" />
-                            </figure>
-                        </div>
-
-                    </section>
-                    <footer class="modal-card-foot">
-                        <button class="button is-success" id='add_item'>Save</button>
-                        <button class="button cancel">Cancel</button>
-                    </footer>
-                </div>
-            </div>
-
-            <div id='upd_item_form' class="modal">
-                <div class="modal-background"></div>
-                <div class="modal-card">
-                    <header class="modal-card-head">
-                        <p class="modal-card-title">Update Item Details</p>
-                        <button class="delete" aria-label="close"></button>
-                    </header>
-                    <section class="modal-card-body">
-                        <div class="field">
-                            <label for="" class="label">Item Name</label>
-                            <span id="item_name" class="has-text-danger errormsg"></span>
-                            <input type="text" class="input" id="item_name" placeholder="Item Name">
-                        </div>
-                        <div class="field">
-                            <label for="" class="label">Item Description</label>
-                            <span id="item_desc" class="has-text-danger errormsg"></span>
-                            <textarea class="textarea" placeholder="Short description about the product" id="item_desc"></textarea>
-                        </div>
-                        <div class="field">
-                            <label for="" class="label">Item Price (in Php)</label>
-                            <span id="price" class="has-text-danger errormsg"></span>
-                            <input class="input" type="number" min="0" placeholder="Price" id="price">
-                        </div>
-                        <div class="field">
-                            <label for="" class="label">Quantity</label>
-                            <span id="qty" class="has-text-danger errormsg"></span>
-                            <input class="input" type="number" min="0" placeholder="Quantity" id="qty">
-                        </div>
-                        <div class="field">
-                            <label for="" class="label">Item Image</label>
-                            <span id="item_image" class="has-text-danger errormsg"></span>
-                            <div id="file-js-example" class="file has-name is-primary">
-                                <label class="file-label">
-                                    <input class="file-input" type="file" name="item_image" id="item_image" accept="image/*">
-                                    <span class="file-cta">
-                                        <span class="file-icon">
-                                            <i class="fa fa-upload"></i>
-                                        </span>
-                                        <span class="file-label">
-                                            Choose a file…
-                                        </span>
-                                    </span>
-                                    <span id="file-name" class="file-name">
-                                        No file uploaded
-                                    </span>
-                                </label>
-
-                            </div>
-                        </div>
-                        <div class="field">
-                            <label for="" class="label">Image Preview</label>
-                            <figure class="image is-128x128">
-                                <img id="upd-img-viewer" src="img/default-img.png" alt="Product Image" />
-                            </figure>
-                        </div>
-
-                    </section>
-                    <footer class="modal-card-foot">
-                        <button class="button is-success" id='upd_item'>Save</button>
-                        <button class="button cancel">Cancel</button>
-                    </footer>
-                </div>
-            </div>
-            <!-- end of store menu -->
-
-            <!-- right sidebar -->
-
-            <!-- cart items -->
-
-            <!-- end of cart items -->
-
-            <!-- payment info -->
-
-
-            <!-- modal receipt -->
         </div>
-        <!-- end of noprint-area -->
 
-        <div id="print-area" class="print-area"></div>
+        <!-- Main modal -->
+        <div id='add_item_form' class="modal">
+            <div class="modal-background"></div>
+            <div class="modal-card">
+                <header class="modal-card-head">
+                    <p class="modal-card-title">Add Item Details</p>
+                    <button class="delete" aria-label="close"></button>
+                </header>
+                <section class="modal-card-body">
+                    <div class="field">
+                        <label for="" class="label">Item Name</label>
+                        <span id="item_name" class="has-text-danger errormsg"></span>
+                        <input type="text" class="input" id="item_name" placeholder="Item Name">
+                    </div>
+                    <div class="field">
+                        <label for="" class="label">Item Description</label>
+                        <span id="item_desc" class="has-text-danger errormsg"></span>
+                        <textarea class="textarea" placeholder="Short description about the product" id="item_desc"></textarea>
+                    </div>
+                    <div class="field">
+                        <label for="" class="label">Item Price (in Php)</label>
+                        <span id="price" class="has-text-danger errormsg"></span>
+                        <input class="input" type="number" min="0" placeholder="Price" id="price">
+                    </div>
+                    <div class="field">
+                        <label for="" class="label">Quantity</label>
+                        <span id="qty" class="has-text-danger errormsg"></span>
+                        <input class="input" type="number" min="0" placeholder="Quantity" id="qty">
+                    </div>
+                    <div class="field">
+                        <label for="" class="label">Item Image</label>
+                        <span id="item_image" class="has-text-danger errormsg"></span>
+                        <div id="file-js-example" class="file has-name is-primary">
+                            <label class="file-label">
+                                <input class="file-input" type="file" name="item_image" id="item_image" accept="image/*">
+                                <span class="file-cta">
+                                    <span class="file-icon">
+                                        <i class="fa fa-upload"></i>
+                                    </span>
+                                    <span class="file-label">
+                                        Choose a file…
+                                    </span>
+                                </span>
+                                <span class="file-name">
+                                    No file uploaded
+                                </span>
+                            </label>
+
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="" class="label">Image Preview</label>
+                        <figure class="image is-128x128">
+                            <img id="add-img-viewer" src="img/default-img.png" alt="Product Image" />
+                        </figure>
+                    </div>
+
+                </section>
+                <footer class="modal-card-foot">
+                    <button class="button is-success" id='add_item'>Save</button>
+                    <button class="button cancel">Cancel</button>
+                </footer>
+            </div>
+        </div>
+
+        <div id='upd_item_form' class="modal">
+            <div class="modal-background"></div>
+            <div class="modal-card">
+                <header class="modal-card-head">
+                    <p class="modal-card-title">Update Item Details</p>
+                    <button class="delete" aria-label="close"></button>
+                </header>
+                <section class="modal-card-body">
+                    <div class="field">
+                        <label for="" class="label">Item Name</label>
+                        <span id="item_name" class="has-text-danger errormsg"></span>
+                        <input type="text" class="input" id="item_name" placeholder="Item Name">
+                    </div>
+                    <div class="field">
+                        <label for="" class="label">Item Description</label>
+                        <span id="item_desc" class="has-text-danger errormsg"></span>
+                        <textarea class="textarea" placeholder="Short description about the product" id="item_desc"></textarea>
+                    </div>
+                    <div class="field">
+                        <label for="" class="label">Item Price (in Php)</label>
+                        <span id="price" class="has-text-danger errormsg"></span>
+                        <input class="input" type="number" min="0" placeholder="Price" id="price">
+                    </div>
+                    <div class="field">
+                        <label for="" class="label">Quantity</label>
+                        <span id="qty" class="has-text-danger errormsg"></span>
+                        <input class="input" type="number" min="0" placeholder="Quantity" id="qty">
+                    </div>
+                    <div class="field">
+                        <label for="" class="label">Item Image</label>
+                        <span id="item_image" class="has-text-danger errormsg"></span>
+                        <div id="file-js-example" class="file has-name is-primary">
+                            <label class="file-label">
+                                <input class="file-input" type="file" name="item_image" id="item_image" accept="image/*">
+                                <span class="file-cta">
+                                    <span class="file-icon">
+                                        <i class="fa fa-upload"></i>
+                                    </span>
+                                    <span class="file-label">
+                                        Choose a file…
+                                    </span>
+                                </span>
+                                <span id="file-name" class="file-name">
+                                    No file uploaded
+                                </span>
+                            </label>
+
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="" class="label">Image Preview</label>
+                        <figure class="image is-128x128">
+                            <img id="upd-img-viewer" src="img/default-img.png" alt="Product Image" />
+                        </figure>
+                    </div>
+
+                </section>
+                <footer class="modal-card-foot">
+                    <button class="button is-success" id='upd_item'>Save</button>
+                    <button class="button cancel">Cancel</button>
+                </footer>
+            </div>
+        </div>
+        <!-- end of store menu -->
+
+        <!-- right sidebar -->
+
+        <!-- cart items -->
+
+        <!-- end of cart items -->
+
+        <!-- payment info -->
+
+
+        <!-- modal receipt -->
+    </div>
+    <!-- end of noprint-area -->
+
+    <div id="print-area" class="print-area"></div>
 </body>
 
 </html>

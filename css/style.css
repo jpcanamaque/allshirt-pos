@@ -347,3 +347,11 @@ table td {
         display: block;
     }
 }
+
+.numcols {
+    text-align: right;
+}
+
+/* .ui-datepicker-calendar tr:hover {
+    background-color: #808080;
+} */
