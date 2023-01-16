@@ -59,6 +59,7 @@ function initApp() {
           discount: product.discount,
           tax_rate: product.tax_rate,
           discounted_price: product.discounted_price,
+          remaining_stock: product.qty,
         });
       } else {
         this.cart[index].qty += 1;
@@ -71,15 +72,20 @@ function initApp() {
     },
     addQty(item, qty) {
       const index = this.cart.findIndex((i) => i.productId === item.productId);
+      const remaining_stock = parseInt(item.remaining_stock);
       if (index === -1) {
         return;
       }
       const afterAdd = item.qty + qty;
-      if (afterAdd === 0) {
+      if (afterAdd === 0 || qty == 0) {
         this.cart.splice(index, 1);
         this.clearSound();
       } else {
-        this.cart[index].qty = afterAdd;
+        if (afterAdd <= remaining_stock) {
+          this.cart[index].qty = afterAdd;
+        } else if (afterAdd > remaining_stock) {
+          this.cart[index].qty = remaining_stock;
+        }
         this.beep();
       }
       this.updateChange();
