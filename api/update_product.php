@@ -16,7 +16,9 @@ $item_list_changes = array();
 foreach ($_POST as $k => $v) {
     if ($k == "item_id") {
         continue;
-    } else if ($k == 'item_qty' || $k == "discount" || $k == "tax_rate") {
+    } else if ($k == 'item_qty') {
+        $item_list_changes[] = "total_item_qty = '$v'";
+    } else if ($k == "discount" || $k == "tax_rate") {
         $item_list_changes[] = "$k = '$v'";
     } else {
         $item_changes[] = "$k = '$v'";
